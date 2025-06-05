@@ -20,6 +20,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { User } from './user.entity';
 
 @ApiTags('users')
 @ApiBearerAuth('JWT-auth')
@@ -62,6 +64,28 @@ export class UsersController {
   })
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('profile')
+  @ApiOperation({
+    summary: 'Get current user profile',
+    description:
+      "Get the current authenticated user's profile (alternative to /auth/me)",
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Current user profile retrieved successfully',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  getCurrentUserProfile(@CurrentUser() user: User): UserResponseDto {
+    // Example of using CurrentUser decorator in other controllers
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword as UserResponseDto;
   }
 
   @Get(':id')
@@ -118,6 +142,28 @@ export class UsersController {
   })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
+  }
+
+  @Patch('profile/update')
+  @ApiOperation({
+    summary: 'Update current user profile',
+    description: "Update the current authenticated user's profile information",
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated successfully',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  updateCurrentUserProfile(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    // Example of updating current user's own profile
+    return this.usersService.update(user.id, updateUserDto);
   }
 
   @Delete(':id')

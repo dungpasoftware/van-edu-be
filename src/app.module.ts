@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { SharedModule } from './shared/shared.module';
+import { UserMiddleware } from './auth/middleware/user.middleware';
 
 @Module({
   imports: [
@@ -25,8 +27,13 @@ import { UsersModule } from './users/users.module';
       }),
       inject: [ConfigService],
     }),
+    SharedModule,
     AuthModule,
     UsersModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(UserMiddleware).forRoutes('*'); // Apply to all routes
+  }
+}
