@@ -5,14 +5,32 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginResponseDto } from './dto/auth-response.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: { email: string; password: string }) {
+  @ApiOperation({
+    summary: 'User login',
+    description: 'Authenticate user with email and password',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid credentials',
+  })
+  async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
@@ -24,20 +42,23 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(
-    @Body()
-    registerDto: {
-      email: string;
-      password: string;
-      fullName: string;
-      phone?: string;
-      address?: string;
-      age?: number;
-    },
-  ) {
+  @ApiOperation({
+    summary: 'User registration',
+    description: 'Register a new user account',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User registered successfully',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Email already exists',
+  })
+  async register(@Body() registerDto: RegisterDto) {
     try {
       return await this.authService.register(registerDto);
-    } catch (_error) {
+    } catch {
       throw new HttpException('Email already exists', HttpStatus.CONFLICT);
     }
   }
