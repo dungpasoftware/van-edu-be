@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserResponseDto {
+export class AuthUserDto {
   @ApiProperty({
     description: 'User ID',
     example: 1,
@@ -29,7 +29,7 @@ export class LoginResponseDto {
 
   @ApiProperty({
     description: 'User information',
-    type: UserResponseDto,
+    type: AuthUserDto,
   })
-  user: UserResponseDto;
+  user: AuthUserDto;
 }
