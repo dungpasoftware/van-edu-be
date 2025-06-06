@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +22,8 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from './user.entity';
@@ -70,7 +75,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get current user profile',
     description:
-      "Get the current authenticated user's profile (alternative to /auth/me)",
+      "Get the current authenticated user's complete profile information (excluding password)",
   })
   @ApiResponse({
     status: 200,
@@ -82,10 +87,124 @@ export class UsersController {
     description: 'Unauthorized - JWT token required',
   })
   getCurrentUserProfile(@CurrentUser() user: User): UserResponseDto {
-    // Example of using CurrentUser decorator in other controllers
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    // Return all user information except password
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword as UserResponseDto;
+  }
+
+  @Patch('profile/update')
+  @ApiOperation({
+    summary: 'Update current user profile',
+    description:
+      "Update the current authenticated user's profile information (excludes email and password)",
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated successfully',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async updateCurrentUserProfile(
+    @CurrentUser() user: User,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    // Use the new updateProfile method that excludes email and password
+    const updatedUser = await this.usersService.updateProfile(
+      user.id,
+      updateProfileDto,
+    );
+
+    if (!updatedUser) {
+      throw new HttpException(
+        'Failed to update profile',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Return updated user without password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword as UserResponseDto;
+  }
+
+  @Patch('change-password')
+  @ApiOperation({
+    summary: 'Change current user password',
+    description:
+      "Change the current authenticated user's password with validation",
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password changed successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Password changed successfully' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      "Bad request - Invalid current password or passwords don't match",
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  async changePassword(
+    @CurrentUser() user: User,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    // Validate that new passwords match
+    if (changePasswordDto.newPassword !== changePasswordDto.confirmPassword) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    // Validate that new password is different from current
+    if (changePasswordDto.currentPassword === changePasswordDto.newPassword) {
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
+    }
+
+    try {
+      await this.usersService.changePassword(
+        user.id,
+        changePasswordDto.currentPassword,
+        changePasswordDto.newPassword,
+      );
+
+      return { message: 'Password changed successfully' };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Failed to change password',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(':id')
@@ -119,7 +238,7 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Update user',
-    description: 'Update user information by ID',
+    description: 'Update user information by ID (admin only)',
   })
   @ApiParam({
     name: 'id',
@@ -142,28 +261,6 @@ export class UsersController {
   })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Patch('profile/update')
-  @ApiOperation({
-    summary: 'Update current user profile',
-    description: "Update the current authenticated user's profile information",
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Profile updated successfully',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized - JWT token required',
-  })
-  updateCurrentUserProfile(
-    @CurrentUser() user: User,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    // Example of updating current user's own profile
-    return this.usersService.update(user.id, updateUserDto);
   }
 
   @Delete(':id')

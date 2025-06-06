@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -37,6 +37,45 @@ export class UsersService {
     }
     await this.userRepository.update(id, userData);
     return this.findOne(id);
+  }
+
+  async updateProfile(
+    id: number,
+    profileData: Partial<User>,
+  ): Promise<User | null> {
+    // Explicitly exclude email and password from profile updates
+
+    const {
+      email: _email,
+      password: _password,
+      ...safeProfileData
+    } = profileData;
+    await this.userRepository.update(id, safeProfileData);
+    return this.findOne(id);
+  }
+
+  async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.findOne(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    // Hash and update new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.update(userId, { password: hashedNewPassword });
   }
 
   async remove(id: number): Promise<void> {
