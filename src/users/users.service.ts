@@ -43,13 +43,16 @@ export class UsersService {
     id: number,
     profileData: Partial<User>,
   ): Promise<User | null> {
-    // Explicitly exclude email and password from profile updates
+    // Create a copy and explicitly exclude email and password fields
+    const safeProfileData = { ...profileData };
+    delete safeProfileData.email;
+    delete safeProfileData.password;
 
-    const {
-      email: _email,
-      password: _password,
-      ...safeProfileData
-    } = profileData;
+    // Check if there are any fields to update
+    if (Object.keys(safeProfileData).length === 0) {
+      throw new BadRequestException('No valid fields provided for update');
+    }
+
     await this.userRepository.update(id, safeProfileData);
     return this.findOne(id);
   }
