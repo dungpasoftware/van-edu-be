@@ -97,6 +97,56 @@ export class UsersController {
     return userWithoutPassword as UserResponseDto;
   }
 
+  @Get('premium-info')
+  @ApiOperation({
+    summary: 'Get premium subscription info',
+    description: 'Get detailed premium subscription information for mobile app',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Premium info retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        isPremium: { type: 'boolean', example: true },
+        premiumExpiryDate: {
+          type: 'string',
+          example: '2024-12-31T23:59:59.999Z',
+        },
+        currentPackage: { type: 'string', example: 'monthly' },
+        daysRemaining: { type: 'number', example: 25 },
+        isExpiringSoon: { type: 'boolean', example: false },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  getPremiumInfo(@CurrentUser() user: User) {
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+    }
+
+    let daysRemaining: number | null = null;
+    let isExpiringSoon = false;
+
+    if (user.isPremium && user.premiumExpiryDate) {
+      const now = new Date();
+      const timeDiff = user.premiumExpiryDate.getTime() - now.getTime();
+      daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
+    }
+
+    return {
+      isPremium: user.isPremium,
+      premiumExpiryDate: user.premiumExpiryDate,
+      currentPackage: user.currentPackage,
+      daysRemaining,
+      isExpiringSoon,
+    };
+  }
+
   @Patch('profile/update')
   @ApiOperation({
     summary: 'Update current user profile',

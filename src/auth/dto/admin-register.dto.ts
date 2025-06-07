@@ -5,19 +5,15 @@ import {
   IsString,
   MinLength,
   IsOptional,
-  IsNumber,
-  Min,
-  IsEnum,
   IsArray,
-  IsBoolean,
+  IsEnum,
 } from 'class-validator';
-import { UserRole } from '../../users/enums/user-role.enum';
 import { AdminPermission } from '../../users/enums/admin-permission.enum';
 
-export class RegisterDto {
+export class AdminRegisterDto {
   @ApiProperty({
-    description: 'Full name of the user',
-    example: 'John Doe',
+    description: 'Full name of the admin',
+    example: 'Admin User',
   })
   @IsString()
   @IsNotEmpty()
@@ -25,14 +21,14 @@ export class RegisterDto {
 
   @ApiProperty({
     description: 'Email address',
-    example: 'john.doe@example.com',
+    example: 'admin@example.com',
   })
   @IsEmail()
   email: string;
 
   @ApiProperty({
     description: 'Password (minimum 6 characters)',
-    example: 'password123',
+    example: 'adminpass123',
     minLength: 6,
   })
   @IsString()
@@ -51,7 +47,7 @@ export class RegisterDto {
 
   @ApiProperty({
     description: 'Address',
-    example: '123 Main St, City, Country',
+    example: '123 Admin St, City, Country',
     required: false,
   })
   @IsString()
@@ -60,42 +56,24 @@ export class RegisterDto {
 
   @ApiProperty({
     description: 'Age',
-    example: 25,
+    example: 30,
     required: false,
   })
-  @IsNumber()
   @IsOptional()
-  @Min(1)
   age?: number;
 
   @ApiProperty({
-    description: 'User role',
-    enum: UserRole,
-    example: UserRole.USER,
-    required: false,
-  })
-  @IsEnum(UserRole)
-  @IsOptional()
-  role?: UserRole;
-
-  @ApiProperty({
-    description: 'Premium status (for normal users)',
-    example: false,
-    required: false,
-  })
-  @IsBoolean()
-  @IsOptional()
-  isPremium?: boolean;
-
-  @ApiProperty({
-    description: 'Admin permissions (only for admin users)',
-    example: [AdminPermission.UPLOAD_VIDEO, AdminPermission.CREATE_CATEGORY],
+    description: 'Admin permissions',
+    example: [
+      AdminPermission.UPLOAD_VIDEO,
+      AdminPermission.CREATE_CATEGORY,
+      AdminPermission.VIEW_USERS,
+    ],
     enum: AdminPermission,
     isArray: true,
-    required: false,
   })
   @IsArray()
   @IsEnum(AdminPermission, { each: true })
-  @IsOptional()
-  permissions?: AdminPermission[];
+  @IsNotEmpty()
+  permissions: AdminPermission[];
 }

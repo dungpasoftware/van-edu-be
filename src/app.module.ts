@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { SharedModule } from './shared/shared.module';
+import { PaymentsModule } from './payments/payments.module';
 import { UserMiddleware } from './auth/middleware/user.middleware';
 
 @Module({
@@ -30,6 +31,7 @@ import { UserMiddleware } from './auth/middleware/user.middleware';
     SharedModule,
     AuthModule,
     UsersModule,
+    PaymentsModule,
   ],
 })
 export class AppModule implements NestModule {

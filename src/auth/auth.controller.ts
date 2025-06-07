@@ -16,7 +16,11 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { AdminRegisterDto } from './dto/admin-register.dto';
 import { LoginResponseDto, AuthUserDto } from './dto/auth-response.dto';
+import { UserRole } from '../users/enums/user-role.enum';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../users/user.entity';
@@ -69,6 +73,43 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto) {
     try {
       return await this.authService.register(registerDto);
+    } catch {
+      throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+    }
+  }
+
+  @Post('admin/register')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Admin registration',
+    description: 'Register a new admin user (admin only)',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Admin registered successfully',
+    type: AuthUserDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token required',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin role required',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Email already exists',
+  })
+  async registerAdmin(@Body() adminRegisterDto: AdminRegisterDto) {
+    try {
+      const adminData = {
+        ...adminRegisterDto,
+        role: UserRole.ADMIN,
+      };
+      return await this.authService.register(adminData);
     } catch {
       throw new HttpException('Email already exists', HttpStatus.CONFLICT);
     }
