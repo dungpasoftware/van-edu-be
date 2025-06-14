@@ -48,25 +48,25 @@ export class Package {
     description: 'Duration in days (null for lifetime)',
     example: 30,
   })
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'duration_days', type: 'int', nullable: true })
   durationDays: number | null;
 
   @ApiProperty({
     description: 'Whether this package is active',
     example: true,
   })
-  @Column({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
   @ApiProperty({
     description: 'Package creation date',
   })
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ApiProperty({
     description: 'Package last update date',
   })
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

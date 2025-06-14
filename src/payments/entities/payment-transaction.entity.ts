@@ -64,37 +64,37 @@ export class PaymentTransaction {
     description: 'QR code data for payment',
     example: 'bank_qr_code_data_here',
   })
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'qr_code_data', type: 'text', nullable: true })
   qrCodeData: string;
 
   @ApiProperty({
     description: 'Payment reference number',
     example: 'PAY-2024-001',
   })
-  @Column({ unique: true })
+  @Column({ name: 'reference_number', unique: true })
   referenceNumber: string;
 
   @ApiProperty({
     description: 'Payment expiry date (for QR code)',
     example: '2024-06-07T10:00:00.000Z',
   })
-  @Column({ type: 'timestamp' })
+  @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
   @ApiProperty({
     description: 'Admin who confirmed the payment',
   })
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'confirmedById' })
+  @JoinColumn({ name: 'confirmed_by_id' })
   confirmedBy: User;
 
-  @Column({ nullable: true })
+  @Column({ name: 'confirmed_by_id', nullable: true })
   confirmedById: number;
 
   @ApiProperty({
     description: 'Payment confirmation date',
   })
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'confirmed_at', type: 'timestamp', nullable: true })
   confirmedAt: Date;
 
   @ApiProperty({
@@ -106,12 +106,12 @@ export class PaymentTransaction {
   @ApiProperty({
     description: 'Transaction creation date',
   })
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ApiProperty({
     description: 'Transaction last update date',
   })
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

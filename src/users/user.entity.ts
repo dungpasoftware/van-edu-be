@@ -16,7 +16,7 @@ export class User {
     description: 'Full name of the user',
     example: 'John Doe',
   })
-  @Column()
+  @Column({ name: 'full_name' })
   fullName: string;
 
   @ApiProperty({
@@ -75,7 +75,7 @@ export class User {
     example: false,
     required: false,
   })
-  @Column({ default: false })
+  @Column({ name: 'is_premium', default: false })
   isPremium: boolean;
 
   @ApiProperty({
@@ -83,7 +83,7 @@ export class User {
     example: '2024-12-31T23:59:59.999Z',
     required: false,
   })
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'premium_expiry_date', type: 'timestamp', nullable: true })
   premiumExpiryDate: Date | null;
 
   @ApiProperty({
@@ -91,7 +91,7 @@ export class User {
     example: 'monthly',
     required: false,
   })
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ name: 'current_package', type: 'varchar', nullable: true })
   currentPackage: string | null;
 
   @ApiProperty({

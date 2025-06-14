@@ -23,7 +23,7 @@ import { UserMiddleware } from './auth/middleware/user.middleware';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') === 'development', // Only for development
+        synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
         logging: configService.get('NODE_ENV') === 'development',
         ssl:
           configService.get('NODE_ENV') === 'production'
