@@ -17,7 +17,17 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:build": "docker build -t van-edu-backend .",
+    "docker:build:dev": "docker build -t van-edu-backend:dev --target development .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env van-edu-backend",
+    "docker:run:dev": "docker run -p 3000:3000 --env-file .env -v $(pwd)/src:/usr/src/app/src van-edu-backend:dev",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f backend",
+    "docker:restart": "docker-compose restart backend",
+    "docker:clean": "docker-compose down && docker rmi van-edu-backend || true",
+    "docker:dev": "docker-compose up --build"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
