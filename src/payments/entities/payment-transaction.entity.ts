@@ -12,7 +12,7 @@ import { User } from '../../users/user.entity';
 import { Package } from './package.entity';
 import { PaymentStatus } from '../enums/payment-status.enum';
 
-@Entity()
+@Entity('payment_transaction')
 export class PaymentTransaction {
   @ApiProperty({
     description: 'Transaction ID',
@@ -25,27 +25,27 @@ export class PaymentTransaction {
     description: 'User who made the payment',
   })
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ name: 'user_id' })
   userId: number;
 
   @ApiProperty({
     description: 'Package being purchased',
   })
   @ManyToOne(() => Package)
-  @JoinColumn({ name: 'packageId' })
+  @JoinColumn({ name: 'package_id' })
   package: Package;
 
-  @Column()
+  @Column({ name: 'package_id' })
   packageId: number;
 
   @ApiProperty({
     description: 'Payment amount',
     example: 9.99,
   })
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ name: 'amount', type: 'decimal', precision: 10, scale: 2 })
   amount: number;
 
   @ApiProperty({
@@ -54,6 +54,7 @@ export class PaymentTransaction {
     example: PaymentStatus.PENDING,
   })
   @Column({
+    name: 'status',
     type: 'enum',
     enum: PaymentStatus,
     default: PaymentStatus.PENDING,
@@ -100,7 +101,7 @@ export class PaymentTransaction {
   @ApiProperty({
     description: 'Additional notes',
   })
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'notes', type: 'text', nullable: true })
   notes: string | null;
 
   @ApiProperty({

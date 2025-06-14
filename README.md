@@ -23,7 +23,24 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Van Edu Backend - A comprehensive online course platform API built with NestJS, featuring user management, premium subscriptions, payment processing, and role-based access control.
+
+### 🚀 Key Features
+- **User Management** with role-based access (USER, ADMIN)
+- **Premium Subscription System** with multiple package options
+- **Payment Processing** with QR code generation and admin confirmation
+- **JWT Authentication** with proper security measures
+- **Swagger API Documentation** for easy development and testing
+- **PostgreSQL Database** with TypeORM and proper snake_case naming conventions
+
+### 📚 Project Documentation
+- **[Cursor AI Rules](.cursor/rules.md)** - Development guidelines and coding standards
+- **[Database Conventions](.cursor/rules/database-conventions.md)** - Critical database naming rules
+- **[Project Standards](.cursor/rules/project-standards.md)** - Comprehensive coding guidelines
+- **[Payment System Guide](PAYMENT-SYSTEM-GUIDE.md)** - Payment and subscription system
+- **[Role-Based System Guide](ROLE-BASED-SYSTEM-GUIDE.md)** - User roles and permissions
+- **[User Profile API Guide](USER-PROFILE-API-GUIDE.md)** - User management endpoints
+- **[Swagger Guide](SWAGGER-GUIDE.md)** - API documentation access
 
 ## Project setup
 

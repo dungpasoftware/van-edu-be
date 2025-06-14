@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity()
+@Entity('package')
 export class Package {
   @ApiProperty({
     description: 'Package ID',
@@ -20,28 +20,28 @@ export class Package {
     description: 'Package name',
     example: 'Monthly Premium',
   })
-  @Column()
+  @Column({ name: 'name' })
   name: string;
 
   @ApiProperty({
     description: 'Package type identifier',
     example: 'monthly',
   })
-  @Column({ unique: true })
+  @Column({ name: 'type', unique: true })
   type: string;
 
   @ApiProperty({
     description: 'Package description',
     example: 'Access to all premium courses for 1 month',
   })
-  @Column({ type: 'text' })
+  @Column({ name: 'description', type: 'text' })
   description: string;
 
   @ApiProperty({
     description: 'Package price in USD',
     example: 9.99,
   })
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ name: 'price', type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
   @ApiProperty({
