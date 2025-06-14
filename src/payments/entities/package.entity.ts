@@ -20,28 +20,28 @@ export class Package {
     description: 'Package name',
     example: 'Monthly Premium',
   })
-  @Column({ name: 'name' })
+  @Column()
   name: string;
 
   @ApiProperty({
     description: 'Package type identifier',
     example: 'monthly',
   })
-  @Column({ name: 'type', unique: true })
+  @Column({ unique: true })
   type: string;
 
   @ApiProperty({
     description: 'Package description',
     example: 'Access to all premium courses for 1 month',
   })
-  @Column({ name: 'description', type: 'text' })
+  @Column({ type: 'text' })
   description: string;
 
   @ApiProperty({
     description: 'Package price in USD',
     example: 9.99,
   })
-  @Column({ name: 'price', type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
   @ApiProperty({

@@ -45,7 +45,7 @@ export class PaymentTransaction {
     description: 'Payment amount',
     example: 9.99,
   })
-  @Column({ name: 'amount', type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;
 
   @ApiProperty({
@@ -54,7 +54,6 @@ export class PaymentTransaction {
     example: PaymentStatus.PENDING,
   })
   @Column({
-    name: 'status',
     type: 'enum',
     enum: PaymentStatus,
     default: PaymentStatus.PENDING,
@@ -101,7 +100,7 @@ export class PaymentTransaction {
   @ApiProperty({
     description: 'Additional notes',
   })
-  @Column({ name: 'notes', type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true })
   notes: string | null;
 
   @ApiProperty({

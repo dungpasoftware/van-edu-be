@@ -1,9 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from './enums/user-role.enum';
 import { AdminPermission } from './enums/admin-permission.enum';
 
-@Entity('user')
+@Entity('users')
 export class User {
   @ApiProperty({
     description: 'Unique identifier for the user',
@@ -23,7 +29,7 @@ export class User {
     description: 'Email address of the user (must be unique)',
     example: 'john.doe@example.com',
   })
-  @Column({ name: 'email', unique: true })
+  @Column({ unique: true })
   email: string;
 
   @ApiProperty({
@@ -31,7 +37,7 @@ export class User {
     example: '$2b$10$xyz...',
     writeOnly: true, // This will hide the password in API responses
   })
-  @Column({ name: 'password' })
+  @Column()
   password: string;
 
   @ApiProperty({
@@ -39,7 +45,7 @@ export class User {
     example: '+1234567890',
     required: false,
   })
-  @Column({ name: 'phone', nullable: true })
+  @Column({ nullable: true })
   phone: string;
 
   @ApiProperty({
@@ -47,7 +53,7 @@ export class User {
     example: '123 Main St, City, Country',
     required: false,
   })
-  @Column({ name: 'address', nullable: true })
+  @Column({ nullable: true })
   address: string;
 
   @ApiProperty({
@@ -55,7 +61,7 @@ export class User {
     example: 25,
     required: false,
   })
-  @Column({ name: 'age', nullable: true })
+  @Column({ nullable: true })
   age: number;
 
   @ApiProperty({
@@ -64,7 +70,6 @@ export class User {
     example: UserRole.USER,
   })
   @Column({
-    name: 'role',
     type: 'enum',
     enum: UserRole,
     default: UserRole.USER,
@@ -101,9 +106,20 @@ export class User {
     required: false,
   })
   @Column({
-    name: 'permissions',
-    type: 'json',
+    type: 'jsonb',
     nullable: true,
   })
   permissions: AdminPermission[];
+
+  @ApiProperty({
+    description: 'User creation date',
+  })
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'User last update date',
+  })
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

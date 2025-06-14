@@ -22,14 +22,21 @@ This project follows strict snake_case naming conventions for all database-relat
 ```typescript
 @Entity('user')
 export class User {
+  // Property name matches column name - no name attribute needed
+  @Column({ unique: true })
+  email: string;
+  
+  @Column()
+  password: string;
+  
+  // Property name differs from column name - use name attribute
   @Column({ name: 'full_name' })
   fullName: string;
   
   @Column({ name: 'is_premium' })
   isPremium: boolean;
   
-  @Column({ name: 'created_at' })
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   
   @Column({ name: 'premium_expiry_date' })
@@ -38,6 +45,7 @@ export class User {
 
 @Entity('payment_transaction')
 export class PaymentTransaction {
+  // Property name differs from column name - use name attribute
   @Column({ name: 'user_id' })
   userId: number;
   
@@ -46,6 +54,10 @@ export class PaymentTransaction {
   
   @Column({ name: 'qr_code_data' })
   qrCodeData: string;
+  
+  // Property name matches column name - no name attribute needed
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  amount: number;
 }
 ```
 
@@ -84,7 +96,9 @@ userId: number;
 - Foreign keys: `fk_{table_name}_{referenced_table_name}`
 
 ## Validation Rules
-- Always use the `name` property in `@Column()` decorator when the database column name differs from the TypeScript property name
+- ONLY use the `name` property in `@Column()` decorator when the database column name differs from the TypeScript property name
+- If TypeScript property name matches database column name, omit the `name` attribute (e.g., `@Column()` for a property named `email` that maps to `email` column)
+- Always use `name` attribute for snake_case database columns that differ from camelCase TypeScript properties
 - Ensure all entity files are consistent with these conventions
 - Use TypeORM naming strategy if needed for automatic conversion
 
