@@ -20,14 +20,14 @@ export class Package {
     description: 'Package name',
     example: 'Monthly Premium',
   })
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @ApiProperty({
     description: 'Package type identifier',
     example: 'monthly',
   })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 50, unique: true })
   type: string;
 
   @ApiProperty({
@@ -55,7 +55,7 @@ export class Package {
     description: 'Whether this package is active',
     example: true,
   })
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
   @ApiProperty({

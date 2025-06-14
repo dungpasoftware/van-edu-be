@@ -28,7 +28,7 @@ export class PaymentTransaction {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', type: 'integer' })
   userId: number;
 
   @ApiProperty({
@@ -38,7 +38,7 @@ export class PaymentTransaction {
   @JoinColumn({ name: 'package_id' })
   package: Package;
 
-  @Column({ name: 'package_id' })
+  @Column({ name: 'package_id', type: 'integer' })
   packageId: number;
 
   @ApiProperty({
@@ -54,9 +54,10 @@ export class PaymentTransaction {
     example: PaymentStatus.PENDING,
   })
   @Column({
-    type: 'enum',
-    enum: PaymentStatus,
-    default: PaymentStatus.PENDING,
+    name: 'status',
+    type: 'varchar',
+    length: 20,
+    default: 'pending',
   })
   status: PaymentStatus;
 
@@ -71,7 +72,12 @@ export class PaymentTransaction {
     description: 'Payment reference number',
     example: 'PAY-2024-001',
   })
-  @Column({ name: 'reference_number', unique: true })
+  @Column({
+    name: 'reference_number',
+    type: 'varchar',
+    length: 255,
+    unique: true,
+  })
   referenceNumber: string;
 
   @ApiProperty({
@@ -88,7 +94,7 @@ export class PaymentTransaction {
   @JoinColumn({ name: 'confirmed_by_id' })
   confirmedBy: User;
 
-  @Column({ name: 'confirmed_by_id', nullable: true })
+  @Column({ name: 'confirmed_by_id', type: 'integer', nullable: true })
   confirmedById: number;
 
   @ApiProperty({

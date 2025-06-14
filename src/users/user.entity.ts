@@ -22,14 +22,14 @@ export class User {
     description: 'Full name of the user',
     example: 'John Doe',
   })
-  @Column({ name: 'full_name' })
+  @Column({ name: 'full_name', type: 'varchar', length: 255 })
   fullName: string;
 
   @ApiProperty({
     description: 'Email address of the user (must be unique)',
     example: 'john.doe@example.com',
   })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
   @ApiProperty({
@@ -37,7 +37,7 @@ export class User {
     example: '$2b$10$xyz...',
     writeOnly: true, // This will hide the password in API responses
   })
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   password: string;
 
   @ApiProperty({
@@ -45,7 +45,7 @@ export class User {
     example: '+1234567890',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   phone: string;
 
   @ApiProperty({
@@ -53,7 +53,7 @@ export class User {
     example: '123 Main St, City, Country',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   address: string;
 
   @ApiProperty({
@@ -61,7 +61,7 @@ export class User {
     example: 25,
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ type: 'integer', nullable: true })
   age: number;
 
   @ApiProperty({
@@ -70,9 +70,10 @@ export class User {
     example: UserRole.USER,
   })
   @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
+    name: 'role',
+    type: 'varchar',
+    length: 20,
+    default: 'user',
   })
   role: UserRole;
 
@@ -81,7 +82,7 @@ export class User {
     example: false,
     required: false,
   })
-  @Column({ name: 'is_premium', default: false })
+  @Column({ name: 'is_premium', type: 'boolean', default: false })
   isPremium: boolean;
 
   @ApiProperty({
@@ -97,7 +98,12 @@ export class User {
     example: 'monthly',
     required: false,
   })
-  @Column({ name: 'current_package', type: 'varchar', nullable: true })
+  @Column({
+    name: 'current_package',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   currentPackage: string | null;
 
   @ApiProperty({

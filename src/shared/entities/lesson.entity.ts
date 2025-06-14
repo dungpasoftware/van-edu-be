@@ -26,14 +26,14 @@ export class Lesson {
   @JoinColumn({ name: 'course_id' })
   course: Course;
 
-  @Column({ name: 'course_id' })
+  @Column({ name: 'course_id', type: 'integer' })
   courseId: number;
 
   @ApiProperty({
     description: 'Lesson title',
     example: 'Introduction to Node.js',
   })
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   title: string;
 
   @ApiProperty({
@@ -49,7 +49,7 @@ export class Lesson {
     example: 'https://example.com/video.mp4',
     required: false,
   })
-  @Column({ name: 'video_url', nullable: true })
+  @Column({ name: 'video_url', type: 'varchar', length: 500, nullable: true })
   videoUrl: string | null;
 
   @ApiProperty({
@@ -57,21 +57,21 @@ export class Lesson {
     example: 1800,
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ type: 'integer', nullable: true })
   duration: number | null;
 
   @ApiProperty({
     description: 'Lesson order within the course',
     example: 1,
   })
-  @Column({ name: 'lesson_order', default: 0 })
+  @Column({ name: 'lesson_order', type: 'integer', default: 0 })
   lessonOrder: number;
 
   @ApiProperty({
     description: 'Whether this lesson requires premium access',
     example: true,
   })
-  @Column({ name: 'is_premium', default: true })
+  @Column({ name: 'is_premium', type: 'boolean', default: true })
   isPremium: boolean;
 
   @ApiProperty({

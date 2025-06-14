@@ -20,7 +20,7 @@ export class Category {
     description: 'Category name',
     example: 'Web Development',
   })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   name: string;
 
   @ApiProperty({
@@ -35,7 +35,7 @@ export class Category {
     description: 'Whether this category is active',
     example: true,
   })
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
   @ApiProperty({

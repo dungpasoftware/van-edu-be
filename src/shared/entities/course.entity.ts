@@ -23,7 +23,7 @@ export class Course {
     description: 'Course title',
     example: 'Complete Node.js Developer Course',
   })
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   title: string;
 
   @ApiProperty({
@@ -40,7 +40,7 @@ export class Course {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column({ name: 'category_id' })
+  @Column({ name: 'category_id', type: 'integer' })
   categoryId: number;
 
   @ApiProperty({
@@ -48,21 +48,21 @@ export class Course {
     example: 'https://example.com/thumbnail.jpg',
     required: false,
   })
-  @Column({ name: 'thumbnail_url', nullable: true })
+  @Column({ name: 'thumbnail_url', type: 'varchar', length: 500, nullable: true })
   thumbnailUrl: string | null;
 
   @ApiProperty({
     description: 'Whether this course requires premium access',
     example: true,
   })
-  @Column({ name: 'is_premium', default: true })
+  @Column({ name: 'is_premium', type: 'boolean', default: true })
   isPremium: boolean;
 
   @ApiProperty({
     description: 'Whether this course is active',
     example: true,
   })
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
   @ApiProperty({
